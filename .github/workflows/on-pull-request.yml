@@ -13,8 +13,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
         
-      - uses: carlosperate/arm-none-eabi-gcc-action@v1
-      - run: arm-none-eabi-gcc --version
-          
+      - name: Build Dependecies
+        uses: purduesigbots/pros-cli/checkout@v1
+        run: pip install -e pros-cli
+      
       - name: Build Project
         run: make quick
