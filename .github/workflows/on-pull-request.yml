@@ -13,10 +13,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
         
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-        with:
-          platforms: 'arm-none-eabi,arm'
+      - uses: carlosperate/arm-none-eabi-gcc-action@v1
+      - run: arm-none-eabi-gcc --version
           
       - name: Build Project
         run: make quick
