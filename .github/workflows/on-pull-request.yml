@@ -20,9 +20,17 @@ jobs:
         with:
           repository: purduesigbots/pros-cli
           path: pros-cli
+          
+      - name: Checkout ARM Compiler
+        uses: ryanwinter/arm-none-eabi-gcc@master
+        with:
+          release: '10.3-2021.10' # The arm-none-eabi-gcc release to use.
         
       - name: Install Dependencies
         run: pip install -e pros-cli
+        
+      - name: Verify PROS-CLI Installation
+        run: pros --version
       
       - name: Build Project
         run: cd demo-robot && make quick
