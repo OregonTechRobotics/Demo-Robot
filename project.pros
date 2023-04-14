@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "Demo Robot 23",
+    "project_name": "Demo Robot ",
     "target": "v5",
     "templates": {
       "kernel": {
