@@ -1,0 +1,36 @@
+name: Makefile CI on Pull Request
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          path: demo-robot
+        
+      - name: Checkout PROS CLI
+        uses: actions/checkout@v3
+        with:
+          repository: purduesigbots/pros-cli
+          path: pros-cli
+          
+      - name: Checkout ARM Compiler
+        uses: ryanwinter/arm-none-eabi-gcc@master
+        with:
+          release: '10.3-2021.10' # The arm-none-eabi-gcc release to use.
+        
+      - name: Install Dependencies
+        run: pip install -e pros-cli
+        
+      - name: Verify PROS-CLI Installation
+        run: pros --version
+      
+      - name: Build Project
+        run: cd demo-robot && pros make
