@@ -1,12 +1,12 @@
 #include "main.h"
 
-// Global Defines
-#define LEFT_FRONT_MOTOR 11
-#define LEFT_BACK_MOTOR 20
-#define RIGHT_FRONT_MOTOR 1
-#define RIGHT_BACK_MOTOR 10
-#define JOYSTICK_DEADZONE 5
-#define DEBUG true
+// Global Constants
+const int LEFT_FRONT_MOTOR = 11;
+const int LEFT_BACK_MOTOR = 20;
+const int RIGHT_FRONT_MOTOR = 1;
+const int RIGHT_BACK_MOTOR = 10;
+const int JOYSTICK_DEADZONE = 5;
+const bool DEBUG = true;
 
 /**
  * A callback function for LLEMU's center button.
@@ -89,8 +89,8 @@ void opcontrol()
 		okapi::ChassisControllerBuilder()
 			.withMotors(
 				xLeftFrontMotor,  // Top left
-				xRightFrontMotor, // Top right 
-				xRightBackMotor,  // Bottom right 
+				xRightFrontMotor, // Top right
+				xRightBackMotor,  // Bottom right
 				xLeftBackMotor	  // Bottom left
 				)
 			// Green gearset, 3.25 inch wheel diameter, 14 inch wheelbase
@@ -98,7 +98,7 @@ void opcontrol()
 			.withOdometry()
 			.buildOdometry();
 
-	auto xDrivetrain = std::dynamic_pointer_cast<okapi::XDriveModel>(xChassisController->getModel());
+	auto xDrivetrain = std::static_pointer_cast<okapi::XDriveModel>(xChassisController->getModel());
 
 	for (;;)
 	{
