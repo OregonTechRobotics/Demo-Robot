@@ -13,8 +13,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
         
-      - name: Checkout Dependecies
-        uses: purduesigbots/pros-cli/checkout@latest
+      - name: Checkout PROS CLI
+        uses: actions/checkout@v3
+        with:
+          repository: purduesigbots/pros-cli
         
       - name: Install Dependencies
         run: pip install -e pros-cli
