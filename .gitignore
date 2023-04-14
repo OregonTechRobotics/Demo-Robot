@@ -33,3 +33,4 @@
 
 # Visual Studio Code Files
 *.vscode
+*compile_commands.json
