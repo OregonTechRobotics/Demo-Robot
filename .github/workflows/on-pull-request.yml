@@ -16,7 +16,7 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
         with:
-          platforms: 'arm64,arm'
+          platforms: 'arm-none-eabi,arm'
           
       - name: Build Project
         run: make quick
