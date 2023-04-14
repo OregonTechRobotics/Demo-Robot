@@ -25,4 +25,4 @@ jobs:
         run: pip install -e pros-cli
       
       - name: Build Project
-        run: make
+        run: cd demo-robot && make quick
