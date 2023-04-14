@@ -10,16 +10,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v3
+        with:
+          path: demo-robot
         
       - name: Checkout PROS CLI
         uses: actions/checkout@v3
         with:
           repository: purduesigbots/pros-cli
+          path: pros-cli
         
       - name: Install Dependencies
-        run: cd pros-cli && pip install -e ../pros-cli-build
+        run: pip install -e pros-cli
       
       - name: Build Project
         run: make quick
