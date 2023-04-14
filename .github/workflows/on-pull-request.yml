@@ -19,9 +19,7 @@ jobs:
           repository: purduesigbots/pros-cli
         
       - name: Install Dependencies
-        run:
-          cd pros-cli
-          pip install -e ../pros-cli-build
+        run: cd pros-cli && pip install -e ../pros-cli-build
       
       - name: Build Project
         run: make quick
