@@ -1,12 +1,14 @@
 #include "main.h"
 
+// Global Defines
+#define DEBUG true
+
 // Global Constants
 const int LEFT_FRONT_MOTOR = 11;
 const int LEFT_BACK_MOTOR = 20;
 const int RIGHT_FRONT_MOTOR = 1;
 const int RIGHT_BACK_MOTOR = 10;
 const int JOYSTICK_DEADZONE = 5;
-const bool DEBUG = true;
 
 /**
  * A callback function for LLEMU's center button.
@@ -77,16 +79,16 @@ void opcontrol()
 {
 	pros::Controller xController(pros::E_CONTROLLER_MASTER);
 
-	okapi::Motor xLeftFrontMotor(LEFT_FRONT_MOTOR);
-	okapi::Motor xLeftBackMotor(LEFT_BACK_MOTOR);
-	okapi::Motor xRightFrontMotor(RIGHT_FRONT_MOTOR);
-	okapi::Motor xRightBackMotor(RIGHT_BACK_MOTOR);
+	Motor xLeftFrontMotor(LEFT_FRONT_MOTOR);
+	Motor xLeftBackMotor(LEFT_BACK_MOTOR);
+	Motor xRightFrontMotor(RIGHT_FRONT_MOTOR);
+	Motor xRightBackMotor(RIGHT_BACK_MOTOR);
 
 	xLeftFrontMotor.setReversed(true);
 	xLeftBackMotor.setReversed(true);
 
-	std::shared_ptr<okapi::ChassisController> xChassisController =
-		okapi::ChassisControllerBuilder()
+	std::shared_ptr<ChassisController> xChassisController =
+		ChassisControllerBuilder()
 			.withMotors(
 				xLeftFrontMotor,  // Top left
 				xRightFrontMotor, // Top right
@@ -94,11 +96,11 @@ void opcontrol()
 				xLeftBackMotor	  // Bottom left
 				)
 			// Green gearset, 3.25 inch wheel diameter, 14 inch wheelbase
-			.withDimensions(okapi::AbstractMotor::gearset::green, {{3.25_in, 14_in}, okapi::imev5GreenTPR})
+			.withDimensions(AbstractMotor::gearset::green, {{3.25_in, 14_in}, imev5GreenTPR})
 			.withOdometry()
 			.buildOdometry();
 
-	auto xDrivetrain = std::static_pointer_cast<okapi::XDriveModel>(xChassisController->getModel());
+	auto xDrivetrain = std::static_pointer_cast<XDriveModel>(xChassisController->getModel());
 
 	for (;;)
 	{
@@ -114,7 +116,9 @@ void opcontrol()
 		pros::lcd::print(3, "Rotate: %d", xRotate);
 #endif
 
-		xDrivetrain->xArcade(xStrafe / double(127), xForward / double(127), xRotate / double(127));
+		xDrivetrain->xArcade(xStrafe / static_cast<double>(127),
+							 xForward / static_cast<double>(127),
+							 xRotate / static_cast<double>(127));
 
 		pros::delay(20);
 	}
