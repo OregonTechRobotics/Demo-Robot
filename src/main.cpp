@@ -79,28 +79,7 @@ void opcontrol()
 {
 	pros::Controller xController(pros::E_CONTROLLER_MASTER);
 
-	Motor xLeftFrontMotor(LEFT_FRONT_MOTOR);
-	Motor xLeftBackMotor(LEFT_BACK_MOTOR);
-	Motor xRightFrontMotor(RIGHT_FRONT_MOTOR);
-	Motor xRightBackMotor(RIGHT_BACK_MOTOR);
-
-	xLeftFrontMotor.setReversed(true);
-	xLeftBackMotor.setReversed(true);
-
-	std::shared_ptr<ChassisController> xChassisController =
-		ChassisControllerBuilder()
-			.withMotors(
-				xLeftFrontMotor,  // Top left
-				xRightFrontMotor, // Top right
-				xRightBackMotor,  // Bottom right
-				xLeftBackMotor	  // Bottom left
-				)
-			// Green gearset, 3.25 inch wheel diameter, 14 inch wheelbase
-			.withDimensions(AbstractMotor::gearset::green, {{3.25_in, 14_in}, imev5GreenTPR})
-			.withOdometry()
-			.buildOdometry();
-
-	auto xDrivetrain = std::static_pointer_cast<XDriveModel>(xChassisController->getModel());
+	double xWheelBase = 14;
 
 	for (;;)
 	{
@@ -109,17 +88,39 @@ void opcontrol()
 		int8_t xStrafe = xController.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
 		int8_t xRotate = xController.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
 
+		// Create translation vector
+		std::vector<int8_t> xTranslation = {xStrafe, xForward};
+		
+		// Find chord length (makes it work with rectangles)
+		double xChordLength = xWheelBase / 2;
+
+		// Find distance from center of rotation to center of chord
+		double xChordDistanceFromOrigin = xChordLength * sqrt(3);
+
+		// Find Opposite Tangent angle of a triangle with the chord as the hypotenuse
+		double xOppositeTangentAngle = atan2(xChordLength, xChordDistanceFromOrigin);
+
+		// Find Tangent angle of a triangle with the chord as the hypotenuse
+		double xTangentAngle = (pi / 2) - xOppositeTangentAngle ;
+
+		// Find sides of the golden triangle 
+		double xAdjacentSide = xRotate * cos(xTangentAngle);
+
+		// Create rotation vector
+		std::vector<double> xRotation = {xRotate * sin(xTangentAngle), xRotate * cos(xTangentAngle)};
+
+		// Create net vector (translation + rotation)
+		std::vector<double> xNetTopLeft = {static_cast<double>(xTranslation[0]) + static_cast<double>(xTranslation[1]), xRotation[0] + xRotation[1]};
+		std::vector<double> xNetTopRight = {static_cast<double>(xTranslation[0]) + static_cast<double>(xTranslation[1]), xRotation[0] - xRotation[1]};
+		std::vector<double> xNetBottomLeft = {static_cast<double>(xTranslation[0]) + static_cast<double>(xTranslation[1]), -xRotation[0] + xRotation[1]};
+		std::vector<double> xNetBottomRight = {static_cast<double>(xTranslation[0]) + static_cast<double>(xTranslation[1]), -xRotation[0] - xRotation[1]};
+
 // For Debugging
 #ifdef DEBUG
 		pros::lcd::print(1, "Forward: %d", xForward);
 		pros::lcd::print(2, "Strafe: %d", xStrafe);
 		pros::lcd::print(3, "Rotate: %d", xRotate);
 #endif
-
-		xDrivetrain->xArcade(xStrafe / static_cast<double>(127),
-							 xForward / static_cast<double>(127),
-							 xRotate / static_cast<double>(127));
-
 		pros::delay(20);
 	}
 }
